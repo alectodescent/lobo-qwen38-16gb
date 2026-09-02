@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "panel_id": "lobo-spatial-firewall-v1",
+  "frozen_utc": "2026-09-01T19:20:00Z",
+  "response_contract": "Return only the requested JSON object. Do not add prose or markdown.",
+  "cases": [
+    {
+      "id": "relative-coordinates-01",
+      "stratum": "relative_position",
+      "prompt": "Use east as +x and north as +y. A copper key starts at (2,-1). A jade coin is three units west and two units north of the key. A red bead is one unit east of the coin. A glass ring is four units south of the bead. Return the coordinates and the compass direction from the ring to the key as {\"key\":[x,y],\"coin\":[x,y],\"bead\":[x,y],\"ring\":[x,y],\"ring_to_key\":\"direction\"}.",
+      "expected": {"key": [2, -1], "coin": [-1, 1], "bead": [0, 1], "ring": [0, -3], "ring_to_key": "northeast"}
+    },
+    {
+      "id": "relative-coordinates-02",
+      "stratum": "relative_position",
+      "prompt": "Use east as +x and north as +y. Elm is at (-4,7). Fir is five units east and three units south of Elm. Ash is two units west of Fir. Yew is six units north of Ash. Return {\"elm\":[x,y],\"fir\":[x,y],\"ash\":[x,y],\"yew\":[x,y],\"elm_to_yew\":\"direction\"}.",
+      "expected": {"elm": [-4, 7], "fir": [1, 4], "ash": [-1, 4], "yew": [-1, 10], "elm_to_yew": "northeast"}
+    },
+    {
+      "id": "navigation-01",
+      "stratum": "multi_step_navigation",
+      "prompt": "Ivo starts at (0,0) facing south. A left turn is relative to the current heading. He turns left, walks five steps, turns around, walks two steps, then turns right and walks three steps. Return {\"position\":[x,y],\"facing\":\"direction\"} using east as +x and north as +y.",
+      "expected": {"position": [3, 3], "facing": "north"}
+    },
+    {
+      "id": "navigation-02",
+      "stratum": "multi_step_navigation",
+      "prompt": "Mira starts at (6,-2) facing west. She walks four, turns right, walks seven, turns right, walks one, turns around, walks three, then turns left and walks two. Return {\"position\":[x,y],\"facing\":\"direction\"} using east as +x and north as +y.",
+      "expected": {"position": [0, 3], "facing": "south"}
+    },
+    {
+      "id": "coordinate-transform-01",
+      "stratum": "coordinate_transform",
+      "prompt": "A robot maps local coordinates to world coordinates by (u,v) -> (v+4,-u+1). Map local (-2,5), then apply the world displacement (-3,+2), then invert the mapping. Return {\"mapped_world\":[x,y],\"final_world\":[x,y],\"final_local\":[u,v]}.",
+      "expected": {"mapped_world": [9, 3], "final_world": [6, 5], "final_local": [-4, 2]}
+    },
+    {
+      "id": "coordinate-transform-02",
+      "stratum": "coordinate_transform",
+      "prompt": "A map converts local (u,v) to world (x,y) by x=2u-v+3 and y=u+v-4. Convert local (5,-2), apply world displacement (-4,+7), and solve for the resulting local coordinate. Return {\"mapped_world\":[x,y],\"final_world\":[x,y],\"final_local\":[u,v]}.",
+      "expected": {"mapped_world": [15, -1], "final_world": [11, 6], "final_local": [6, 4]}
+    },
+    {
+      "id": "minecraft-frame-01",
+      "stratum": "orientation_rotation",
+      "prompt": "Minecraft frame convention: local +x is right, local +y is up, and local +z is forward. A frame at world origin (12,64,-7) faces east, so local (x,y,z) maps to world (origin.x+z, origin.y+y, origin.z+x). Map local point (-3,5,8). Return {\"world\":[x,y,z]}.",
+      "expected": {"world": [20, 69, -10]}
+    },
+    {
+      "id": "object-movement-01",
+      "stratum": "object_movement",
+      "prompt": "Track distinct objects. Red starts at (1,2), Blue at (-3,5), and Green at (4,-1). Apply in order: move Red by (+2,-4); swap the complete positions of Blue and Green; move the object now at (-3,5) by (-1,+6); move Blue by (+5,+1). Return {\"red\":[x,y],\"blue\":[x,y],\"green\":[x,y]}.",
+      "expected": {"red": [3, -2], "blue": [9, 0], "green": [-4, 11]}
+    },
+    {
+      "id": "object-movement-02",
+      "stratum": "object_movement",
+      "prompt": "Track three drones. A starts at (0,0,0), B at (8,-2,4), C at (-5,3,1). Apply in order: A += (2,1,-3); C += (4,-2,6); swap all coordinates of A and B; B += (-1,5,2). Return {\"A\":[x,y,z],\"B\":[x,y,z],\"C\":[x,y,z]}.",
+      "expected": {"A": [8, -2, 4], "B": [1, 6, -1], "C": [-1, 1, 7]}
+    },
+    {
+      "id": "containment-order-01",
+      "stratum": "containment_order",
+      "prompt": "Crate A contains boxes B and C. B contains gems D and E. C contains box F. F contains gem G. The left-to-right shelf order is E, H, D, G. Return {\"direct_container_of_G\":\"name\",\"outermost_container_of_G\":\"name\",\"left_of_D\":\"name\",\"between_E_and_G\":[\"name\",\"name\"]}.",
+      "expected": {"direct_container_of_G": "F", "outermost_container_of_G": "A", "left_of_D": "H", "between_E_and_G": ["H", "D"]}
+    },
+    {
+      "id": "scene-update-01",
+      "stratum": "compositional_scene_update",
+      "prompt": "Initial records: Rowan owns red key and plot (10,64,0). Mira owns blue key and plot (-5,70,8). Soren owns green key and plot (3,66,-9). Apply in order: cycle keys Rowan->Mira, Mira->Soren, Soren->Rowan; move only Mira's plot by (+4,-2,+7); swap the complete plot positions of Rowan and Soren. Return {\"Rowan\":{\"key\":\"color\",\"plot\":[x,y,z]},\"Mira\":{\"key\":\"color\",\"plot\":[x,y,z]},\"Soren\":{\"key\":\"color\",\"plot\":[x,y,z]}}.",
+      "expected": {"Rowan": {"key": "green", "plot": [3, 66, -9]}, "Mira": {"key": "red", "plot": [-1, 68, 15]}, "Soren": {"key": "blue", "plot": [10, 64, 0]}}
+    },
+    {
+      "id": "long-binding-01",
+      "stratum": "long_sequence_tracking",
+      "long_context": true,
+      "prompt": "The following bindings are authoritative: alder=(owner-17,amber,391); birch=(owner-04,cobalt,772); cedar=(owner-31,jade,155); dogwood=(owner-09,violet,884); elm=(owner-22,silver,463); fir=(owner-02,amber,926); ginkgo=(owner-28,cobalt,217); hazel=(owner-11,jade,608). Apply in order: swap the owners of cedar and elm; set birch's checksum to 440; swap the complete records of fir and hazel; change the color attached to the record currently named cedar to silver; set the owner attached to dogwood to owner-03. Return only the final records for cedar, dogwood, fir, and hazel as {\"cedar\":[\"owner\",\"color\",checksum],\"dogwood\":[\"owner\",\"color\",checksum],\"fir\":[\"owner\",\"color\",checksum],\"hazel\":[\"owner\",\"color\",checksum]}.",
+      "expected": {"cedar": ["owner-22", "silver", 155], "dogwood": ["owner-03", "violet", 884], "fir": ["owner-11", "jade", 608], "hazel": ["owner-02", "amber", 926]}
+    }
+  ]
+}

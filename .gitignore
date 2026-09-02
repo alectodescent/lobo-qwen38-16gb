@@ -1,0 +1,34 @@
+_build/
+dist/*
+!dist/.gitkeep
+models/*
+!models/README.md
+benchmarks/results/local-*
+*.gguf
+*.ggml
+*.zip
+*.log
+*.nsys-rep
+*.ncu-rep
+.vs/
+.vscode/
+__pycache__/
+*.pyc
+
+# The public appliance carries the buildable serving/runtime core, not the
+# upstream project's CI, mobile, research-benchmark, or agent scratch trees.
+runtime/.devops/
+runtime/.gemini/
+runtime/.github/
+runtime/.pi/
+runtime/AGENTS.md
+runtime/CLAUDE.md
+runtime/benches/
+runtime/ci/
+runtime/docker/
+runtime/docs/
+runtime/examples/
+runtime/media/
+runtime/pocs/
+runtime/tmp/
+runtime/app/

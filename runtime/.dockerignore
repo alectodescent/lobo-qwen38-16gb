@@ -1,0 +1,26 @@
+# Каталоги .github/, models/ и файл .gitignore НЕ исключаются намеренно:
+# без них дерево внутри сборки расходится с git и версия образа получает
+# помету -dirty, а tests/ читают и .github/workflows/release.yml, и
+# models/ggml-vocab-*.gguf.
+*.o
+*.a
+.cache/
+# Do not ignore .git directory, otherwise the reported build number will always be 0
+.vs/
+.vscode/
+.DS_Store
+
+build*/
+# build*/ цепляет и файл build-xcframework.sh: в .dockerignore
+# завершающий слэш не ограничивает совпадение каталогами.
+!build-xcframework.sh
+
+tools/ui/node_modules/
+
+
+/llama-cli
+/llama-quantize
+
+arm_neon.h
+compile_commands.json
+Dockerfile

@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "frozen_utc": "2026-09-02T00:00:00Z",
+  "scope": "private-to-public release reference; no raw private paths or prompts",
+  "hardware": {
+    "gpu": "NVIDIA RTX 5070 Ti 16 GB",
+    "architecture": "SM120",
+    "cpu": "AMD Ryzen 7 7800X3D",
+    "system_ram_gib": 32,
+    "os": "Windows 11 / WDDM",
+    "cuda": "13.3"
+  },
+  "runtime_source_snapshot": "84ee2d114ace12dce6b0b2e16aae03d5cd4d2298",
+  "model": {
+    "base_sha256": "64b53b64c7aa39f20a7e54bd80582fe595b1d745624ee8a72e92508c0326d810",
+    "mtp_pack_sha256": "4eb8482539194ed9bc1555c88613f39f2e65db37b16d9ab173f908e78d454512",
+    "dflash_sha256": "18a380efc9b7ed8d88677fc895f5c11ae170653434ee378f7348f715c14d0594"
+  },
+  "configuration": {
+    "target_kv": "KVarN K4V2 G128",
+    "bytes_per_model_token": 13824,
+    "tile": 2,
+    "balanced_context": 230144,
+    "balanced_batch": 64,
+    "balanced_ubatch": 16,
+    "mtp_n": 2,
+    "mtp_draft_kv": "KVarN K2V2",
+    "mtp_draft_context": 256
+  },
+  "matched_improvements": [
+    {"arm": "target", "context": 8192, "before_tps": 38.083, "after_tps": 39.040, "relative_percent": 2.51},
+    {"arm": "mtp_n2", "context": 8192, "before_tps": 72.119, "after_tps": 77.712, "relative_percent": 7.76},
+    {"arm": "dflash_n4", "context": 8192, "before_tps": 87.051, "after_tps": 89.358, "relative_percent": 2.65},
+    {"arm": "mtp_n2", "context": 230144, "before_tps": 35.94, "after_tps": 36.256859, "relative_percent": 0.88}
+  ],
+  "controlled_b64_ub16": [
+    {"depth": 2048, "target_tps": 39.56, "mtp_tps": 74.59, "dflash_tps": 93.31},
+    {"depth": 8192, "target_tps": 37.87, "mtp_tps": 72.33, "dflash_tps": 86.91},
+    {"depth": 16000, "target_tps": 37.23, "mtp_tps": 70.61, "dflash_tps": 83.71},
+    {"depth": 32000, "target_tps": 28.28, "mtp_tps": 67.61, "dflash_tps": 72.60},
+    {"depth": 64000, "target_tps": 21.55, "mtp_tps": 59.86, "dflash_tps": 64.94},
+    {"depth": 128000, "target_tps": 14.42, "mtp_tps": 47.05, "dflash_tps": 49.62}
+  ],
+  "balanced_long_binding": {
+    "live_depth": 230000,
+    "allocated_context": 230144,
+    "exact": true,
+    "prompt_tps": 186.705888,
+    "committed_tps": 36.256859,
+    "maximum_gpu_used_mib": 15714,
+    "minimum_gpu_free_mib": 282,
+    "maximum_process_dedicated_mib": 15075.672,
+    "maximum_process_shared_mib": 94,
+    "process_ram_mib": null
+  },
+  "rollover_924": {
+    "target_tps": 47.9722,
+    "mtp_tps": 90.1129,
+    "output_tokens": 924,
+    "target_identical_tokens": 924,
+    "drafts": 621,
+    "accepted": 612,
+    "rollovers": 3
+  },
+  "correctness": {
+    "backend_iq_matrix": "98/98 passed",
+    "kvarn_cpu_gpu_parity": "passed",
+    "save_reload": "passed",
+    "transactional_state_copy": "passed",
+    "firewall_32k": "all generated tokens matched frozen target; strict parser 5/12",
+    "dflash_target_identity": "passed on retained qualification"
+  }
+}
+

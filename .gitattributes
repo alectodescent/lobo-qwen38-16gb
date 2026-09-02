@@ -1,0 +1,5 @@
+# Preserve the byte form used by these vendored upstream UI sources.
+runtime/tools/ui/src/lib/vendors/big-integer/LICENSE -text
+runtime/tools/ui/src/lib/vendors/big-integer/BigInteger.js -text
+runtime/tools/ui/src/lib/vendors/decimal.js/decimal.js -text
+runtime/tools/ui/src/lib/vendors/decimal.js/LICENCE.md -text

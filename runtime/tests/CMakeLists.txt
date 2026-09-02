@@ -1,0 +1,598 @@
+llama_add_compile_flags()
+
+find_package(Python3 COMPONENTS Interpreter QUIET)
+
+if (Python3_Interpreter_FOUND)
+    add_test(
+        NAME test-release-workflow-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-release-workflow-static.py)
+    set_property(TEST test-release-workflow-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-release-cache-parent
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-release-cache-parent.py)
+    set_property(TEST test-release-cache-parent PROPERTY LABELS main)
+
+    add_test(
+        NAME test-backend-ops-seed-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-backend-ops-seed-static.py)
+    set_property(TEST test-backend-ops-seed-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-arm-cpu-feats-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-arm-cpu-feats-static.py)
+    set_property(TEST test-arm-cpu-feats-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-cuda-graph-source-properties-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-cuda-graph-source-properties-static.py)
+    set_property(TEST test-cuda-graph-source-properties-static PROPERTY LABELS cuda)
+
+    add_test(
+        NAME test-std-kv-tail-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-std-kv-tail-static.py)
+    set_property(TEST test-std-kv-tail-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-removed-cache-types-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-removed-cache-types-static.py)
+    set_property(TEST test-removed-cache-types-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-cache-type-redirects-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-cache-type-redirects-static.py)
+    set_property(TEST test-cache-type-redirects-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-issue41-regressions-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-issue41-regressions-static.py)
+    set_property(TEST test-issue41-regressions-static PROPERTY LABELS cuda)
+
+    add_test(
+        NAME test-cuda-mmq-low-bit-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-cuda-mmq-low-bit-static.py)
+    set_property(TEST test-cuda-mmq-low-bit-static PROPERTY LABELS cuda)
+
+    add_test(
+        NAME test-fattn-vec-dispatch-generated
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/gen-fattn-vec-dispatch.py --check)
+    set_property(TEST test-fattn-vec-dispatch-generated PROPERTY LABELS cuda)
+
+    add_test(
+        NAME test-hip-shuffle-compat-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-hip-shuffle-compat-static.py)
+    set_property(TEST test-hip-shuffle-compat-static PROPERTY LABELS hip)
+
+    add_test(
+        NAME test-upstream-dflash-only-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-upstream-dflash-only-static.py)
+    set_property(TEST test-upstream-dflash-only-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-server-loop-guard-checkpoint-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-server-loop-guard-checkpoint-static.py)
+    set_property(TEST test-server-loop-guard-checkpoint-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-spec-cession-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-spec-cession-static.py)
+    set_property(TEST test-spec-cession-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-upstream-merge-keepers-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-upstream-merge-keepers-static.py)
+    set_property(TEST test-upstream-merge-keepers-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-kvarn-eager-workspace-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-kvarn-eager-workspace-static.py)
+    set_property(TEST test-kvarn-eager-workspace-static PROPERTY LABELS cuda)
+
+    add_test(
+        NAME test-kvarn-rollback-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-kvarn-rollback-static.py)
+    set_property(TEST test-kvarn-rollback-static PROPERTY LABELS main)
+
+    add_test(
+        NAME test-kvarn-hip-tail-capability-static
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-kvarn-hip-tail-capability-static.py)
+    set_property(TEST test-kvarn-hip-tail-capability-static PROPERTY LABELS hip)
+
+    add_test(
+        NAME test-kvarn-hip-runtime-validation
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tests/test-kvarn-hip-runtime-validation.py ${PROJECT_SOURCE_DIR})
+    set_property(TEST test-kvarn-hip-runtime-validation PROPERTY LABELS main)
+endif()
+
+function(llama_build source)
+    set(TEST_SOURCES ${source} ${ARGN})
+
+    if (DEFINED LLAMA_TEST_NAME)
+        set(TEST_TARGET ${LLAMA_TEST_NAME})
+    else()
+        get_filename_component(TEST_TARGET ${source} NAME_WE)
+    endif()
+
+    add_executable(${TEST_TARGET} ${TEST_SOURCES})
+    target_link_libraries(${TEST_TARGET} PRIVATE llama llama-common)
+    if (LLAMA_TESTS_INSTALL)
+        install(TARGETS ${TEST_TARGET} RUNTIME)
+    endif()
+endfunction()
+
+function(llama_test target)
+    include(CMakeParseArguments)
+    set(options)
+    set(oneValueArgs NAME LABEL WORKING_DIRECTORY)
+    set(multiValueArgs ARGS)
+    cmake_parse_arguments(LLAMA_TEST "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if (NOT DEFINED LLAMA_TEST_LABEL)
+        set(LLAMA_TEST_LABEL "main")
+    endif()
+    if (NOT DEFINED LLAMA_TEST_WORKING_DIRECTORY)
+        set(LLAMA_TEST_WORKING_DIRECTORY .)
+    endif()
+    if (DEFINED LLAMA_TEST_NAME)
+        set(TEST_NAME ${LLAMA_TEST_NAME})
+    else()
+        set(TEST_NAME ${target})
+    endif()
+
+    set(TEST_TARGET ${target})
+
+    add_test(
+        NAME ${TEST_NAME}
+        WORKING_DIRECTORY ${LLAMA_TEST_WORKING_DIRECTORY}
+        COMMAND $<TARGET_FILE:${TEST_TARGET}>
+        ${LLAMA_TEST_ARGS})
+
+    set_property(TEST ${TEST_NAME} PROPERTY LABELS ${LLAMA_TEST_LABEL})
+endfunction()
+
+function(llama_test_cmd target)
+    include(CMakeParseArguments)
+    set(options)
+    set(oneValueArgs NAME LABEL WORKING_DIRECTORY)
+    set(multiValueArgs ARGS)
+    cmake_parse_arguments(LLAMA_TEST "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if (NOT DEFINED LLAMA_TEST_LABEL)
+        set(LLAMA_TEST_LABEL "main")
+    endif()
+    if (NOT DEFINED LLAMA_TEST_WORKING_DIRECTORY)
+        set(LLAMA_TEST_WORKING_DIRECTORY .)
+    endif()
+    if (DEFINED LLAMA_TEST_NAME)
+        set(TEST_NAME ${LLAMA_TEST_NAME})
+    else()
+        set(TEST_NAME ${target})
+    endif()
+
+    add_test(
+        NAME ${TEST_NAME}
+        WORKING_DIRECTORY ${LLAMA_TEST_WORKING_DIRECTORY}
+        COMMAND ${target}
+        ${LLAMA_TEST_ARGS})
+
+    set_property(TEST ${TEST_NAME} PROPERTY LABELS ${LLAMA_TEST_LABEL})
+endfunction()
+
+# Builds and runs a test source file.
+# Optional args:
+# - NAME: name of the executable & test target (defaults to the source file name without extension)
+# - LABEL: label for the test (defaults to main)
+# - ARGS: arguments to pass to the test executable
+# - WORKING_DIRECTORY
+function(llama_build_and_test source)
+    include(CMakeParseArguments)
+    set(options)
+    set(oneValueArgs NAME LABEL WORKING_DIRECTORY)
+    set(multiValueArgs ARGS)
+    cmake_parse_arguments(LLAMA_TEST "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    set(TEST_SOURCES ${source} ${LLAMA_TEST_UNPARSED_ARGUMENTS})
+
+    if (NOT DEFINED LLAMA_TEST_LABEL)
+        set(LLAMA_TEST_LABEL "main")
+    endif()
+    if (NOT DEFINED LLAMA_TEST_WORKING_DIRECTORY)
+        set(LLAMA_TEST_WORKING_DIRECTORY .)
+    endif()
+    if (DEFINED LLAMA_TEST_NAME)
+        set(TEST_TARGET ${LLAMA_TEST_NAME})
+    else()
+        get_filename_component(TEST_TARGET ${source} NAME_WE)
+    endif()
+
+    add_executable(${TEST_TARGET} ${TEST_SOURCES})
+    if (LLAMA_TESTS_INSTALL)
+        install(TARGETS ${TEST_TARGET} RUNTIME)
+    endif()
+    target_link_libraries(${TEST_TARGET} PRIVATE llama-common)
+
+    add_test(
+        NAME ${TEST_TARGET}
+        WORKING_DIRECTORY ${LLAMA_TEST_WORKING_DIRECTORY}
+        COMMAND $<TARGET_FILE:${TEST_TARGET}>
+        ${LLAMA_TEST_ARGS})
+
+    set_property(TEST ${TEST_TARGET} PROPERTY LABELS ${LLAMA_TEST_LABEL})
+endfunction()
+
+# build test-tokenizer-0 target once and add many tests
+llama_build(test-tokenizer-0.cpp)
+
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-bert-bge          ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-bert-bge.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-command-r         ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-command-r.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-deepseek-coder    ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-deepseek-coder.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-deepseek-llm      ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-deepseek-llm.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-falcon            ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-falcon.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-gemma-4           ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-gemma-4.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-gpt-2             ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-gpt-2.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-llama-bpe         ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-llama-bpe.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-llama-spm         ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-llama-spm.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-mpt               ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-mpt.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-phi-3             ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-phi-3.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-qwen2             ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-qwen2.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-qwen35            ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-qwen35.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-refact            ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-refact.gguf)
+llama_test(test-tokenizer-0 NAME test-tokenizer-0-starcoder         ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-starcoder.gguf)
+
+if (NOT WIN32)
+    llama_test_cmd(
+        ${CMAKE_CURRENT_SOURCE_DIR}/test-tokenizers-repo.sh
+        NAME test-tokenizers-ggml-vocabs
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        ARGS https://huggingface.co/ggml-org/vocabs ${PROJECT_SOURCE_DIR}/models/ggml-vocabs
+    )
+endif()
+
+if (LLAMA_LLGUIDANCE)
+    llama_build_and_test(test-grammar-llguidance.cpp ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-llama-bpe.gguf)
+endif ()
+
+llama_build(test-recurrent-state-rollback.cpp)
+
+if (NOT WIN32 OR NOT BUILD_SHARED_LIBS)
+    # these tests are disabled on Windows because they use internal functions not exported with LLAMA_API (when building with shared libraries)
+    llama_build_and_test(test-unicode.cpp)
+    llama_build_and_test(test-sampling.cpp)
+    llama_build_and_test(test-reasoning-budget.cpp)
+    llama_build_and_test(test-grammar-parser.cpp)
+    llama_build_and_test(test-grammar-integration.cpp)
+    llama_build_and_test(test-llama-grammar.cpp)
+    llama_build_and_test(test-batch-alloc.cpp)
+    llama_build_and_test(test-chat.cpp WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+    target_include_directories(test-chat PRIVATE ${PROJECT_SOURCE_DIR}/tools/server)
+    target_link_libraries(test-chat PRIVATE server-context)
+    # TODO: disabled on loongarch64 because the ggml-ci node lacks Python 3.8
+    if (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "loongarch64")
+        llama_build_and_test(test-json-schema-to-grammar.cpp   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+        target_include_directories(test-json-schema-to-grammar PRIVATE ${PROJECT_SOURCE_DIR}/tools/server)
+    endif()
+
+    if (NOT GGML_BACKEND_DL)
+        llama_build(test-quantize-stats.cpp)
+    endif()
+
+    llama_build(test-gbnf-validator.cpp)
+
+    # build test-tokenizer-1-bpe target once and add many tests
+    llama_build(test-tokenizer-1-bpe.cpp)
+
+    # TODO: disabled due to slowness
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-aquila    ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-aquila.gguf)
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-falcon    ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-falcon.gguf)
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-gpt-2     ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-gpt-2.gguf)
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-gpt-neox  ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-gpt-neox.gguf)
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-llama-bpe ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-llama-bpe.gguf --ignore-merges)
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-mpt       ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-mpt.gguf)
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-refact    ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-refact.gguf)
+    #llama_test(test-tokenizer-1-bpe NAME test-tokenizer-1-starcoder ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-starcoder.gguf)
+
+    # build test-tokenizer-1-spm target once and add many tests
+    llama_build(test-tokenizer-1-spm.cpp)
+
+    llama_test(test-tokenizer-1-spm  NAME test-tokenizer-1-llama-spm ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-llama-spm.gguf)
+    #llama_test(test-tokenizer-1-spm  NAME test-tokenizer-1-baichuan  ARGS ${PROJECT_SOURCE_DIR}/models/ggml-vocab-baichuan.gguf)
+
+    # llama_build_and_test(test-double-float.cpp) # SLOW
+
+    llama_build_and_test(test-llama-archs.cpp)
+    llama_test(
+        test-llama-archs
+        NAME test-mtp-ubatch-sync
+        LABEL main
+        ARGS --test-mtp-ubatch-sync
+    )
+
+    set(MODEL_DIR "${CMAKE_CURRENT_BINARY_DIR}/test-models/")
+    file(MAKE_DIRECTORY "${MODEL_DIR}")
+
+    llama_test(
+        test-llama-archs
+        NAME test-generate-models
+        LABEL main
+        ARGS -o "${MODEL_DIR}"
+    )
+    set_tests_properties(test-generate-models PROPERTIES
+        FIXTURES_SETUP generate-models
+    )
+
+    # Охрана десятого патча стопки (kvarn-group-claim, шестнадцатая волна).
+    #
+    # Нужен кэш KVarN, а тому нужна голова 128/256/512: у скачиваемого
+    # stories15M она 48, поэтому берётся синтетическая модель из
+    # test-generate-models — у неё key_length 128. Архитектура именно llama:
+    # qwen35 гибридный, его внимание уходит в llama_memory_hybrid, где
+    # структурной раскладки по группам нет.
+    #
+    # --kv-tail-tokens 1024 обязателен: без явного запроса политика хвоста
+    # делает хвост равным окну, представление становится native_exact, и модель
+    # строит обычный llama_kv_cache без групповой раскладки. Сам тест
+    # дополнительно проверяет, что структурная ветка исполнилась.
+    llama_build_and_test(test-kv-group-claim.cpp
+        LABEL main
+        ARGS -m "${MODEL_DIR}/llama-dense.gguf"
+             --cache-type-k kvarn5 --cache-type-v kvarn5 -ngl 0
+             --kv-tail-tokens 1024
+    )
+    set_tests_properties(test-kv-group-claim PROPERTIES
+        FIXTURES_REQUIRED generate-models
+    )
+
+    llama_test(
+        test-recurrent-state-rollback
+        LABEL main
+        ARGS -m "${MODEL_DIR}/qwen35-dense.gguf"
+    )
+    set_tests_properties(test-recurrent-state-rollback PROPERTIES
+        FIXTURES_REQUIRED generate-models
+    )
+
+    llama_test(
+        test-recurrent-state-rollback
+        NAME test-recurrent-state-rollback-nemotron-h
+        LABEL main
+        ARGS -m "${MODEL_DIR}/nemotron_h-dense.gguf"
+    )
+    set_tests_properties(test-recurrent-state-rollback-nemotron-h PROPERTIES
+        FIXTURES_REQUIRED generate-models
+    )
+endif()
+
+llama_build_and_test(test-chat-peg-parser.cpp peg-parser/simple-tokenize.cpp)
+llama_build_and_test(test-jinja.cpp)
+llama_test(test-jinja NAME test-jinja-py ARGS -py LABEL python)
+llama_build_and_test(test-chat-auto-parser.cpp WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+llama_build_and_test(test-chat-template.cpp)
+llama_build_and_test(test-log.cpp)
+llama_build_and_test(
+    test-peg-parser.cpp
+    peg-parser/simple-tokenize.cpp
+    peg-parser/test-basic.cpp
+    peg-parser/test-gbnf-generation.cpp
+    peg-parser/test-json-parser.cpp
+    peg-parser/test-json-serialization.cpp
+    peg-parser/test-python-dict-parser.cpp
+    peg-parser/test-unicode.cpp
+    peg-parser/tests.h
+)
+
+if (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "s390x")
+    set(MODEL_NAME "tinyllamas/stories15M-q4_0.gguf")
+    set(MODEL_HASH "SHA256=66967fbece6dbe97886593fdbb73589584927e29119ec31f08090732d1861739")
+else()
+    set(MODEL_NAME "tinyllamas/stories15M-be.Q4_0.gguf")
+    set(MODEL_HASH "SHA256=9aec857937849d976f30397e97eb1cabb53eb9dcb1ce4611ba8247fb5f44c65d")
+endif()
+set(MODEL_DEST "${CMAKE_BINARY_DIR}/${MODEL_NAME}")
+
+add_test(NAME test-download-model COMMAND ${CMAKE_COMMAND}
+    -DDEST=${MODEL_DEST}
+    -DNAME=${MODEL_NAME}
+    -DHASH=${MODEL_HASH}
+    -P ${CMAKE_SOURCE_DIR}/cmake/download-models.cmake
+)
+set_tests_properties(test-download-model PROPERTIES FIXTURES_SETUP test-download-model)
+
+llama_build_and_test(test-thread-safety.cpp ARGS -m "${MODEL_DEST}" -ngl 99 -p "The meaning of life is" -n 128 -c 256 -ub 32 -np 4 -t 2)
+set_tests_properties(test-thread-safety PROPERTIES FIXTURES_REQUIRED test-download-model)
+
+llama_build_and_test(test-arg-parser.cpp)
+llama_build_and_test(test-kv-cache-tail.cpp ../src/llama-kv-cache-tail.cpp)
+target_include_directories(test-kv-cache-tail PRIVATE ${PROJECT_SOURCE_DIR}/src)
+llama_build_and_test(test-kv-tail-request.cpp ../src/llama-kv-tail-request.cpp ../src/llama-kvarn.cpp)
+target_include_directories(test-kv-tail-request PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+llama_build_and_test(test-fit-kvarn-tail.cpp ../common/fit-kvarn-tail.cpp)
+target_include_directories(test-fit-kvarn-tail PRIVATE ${PROJECT_SOURCE_DIR}/common)
+llama_build_and_test(test-kv-cache-placement.cpp ../src/llama-kv-cache-placement.cpp)
+target_include_directories(test-kv-cache-placement PRIVATE ${PROJECT_SOURCE_DIR}/src)
+llama_build_and_test(test-std-kv-tail-graph.cpp ../src/llama-kv-cache-tail.cpp)
+target_include_directories(test-std-kv-tail-graph PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+add_executable(test-kvarn test-kvarn.cpp ../src/llama-kvarn.cpp)
+target_include_directories(test-kvarn PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(test-kvarn PRIVATE cxx_std_17)
+target_link_libraries(test-kvarn PRIVATE ggml)
+if (LLAMA_TESTS_INSTALL)
+    install(TARGETS test-kvarn RUNTIME)
+endif()
+add_test(NAME test-kvarn WORKING_DIRECTORY . COMMAND $<TARGET_FILE:test-kvarn>)
+set_property(TEST test-kvarn PROPERTY LABELS main)
+
+# Ширина тайла строк запроса читается из GGML_KVARN_Q_TILE один раз на процесс,
+# поэтому перебрать её внутри одного прогона нельзя. На формах основной матрицы
+# оценка кандидатов всегда выбирает тайл 1 (n_kv = 1024 даёт одну волну), так
+# что без этих двух записей ядра с Q_TILE 2 и 3 не исполняются ни одним тестом.
+# При заданной переменной test-kvarn выполняет только матрицу split-декода:
+# однотокенные формы остального набора при принудительном широком тайле
+# законно уходят на generic MMA.
+foreach (KVARN_Q_TILE 2 3)
+    add_test(NAME test-kvarn-q-tile-${KVARN_Q_TILE}
+             WORKING_DIRECTORY . COMMAND $<TARGET_FILE:test-kvarn>)
+    set_property(TEST test-kvarn-q-tile-${KVARN_Q_TILE} PROPERTY LABELS main)
+    set_property(TEST test-kvarn-q-tile-${KVARN_Q_TILE} PROPERTY
+                 ENVIRONMENT GGML_KVARN_Q_TILE=${KVARN_Q_TILE})
+endforeach()
+
+llama_build_and_test(test-adaptive-dm.cpp)
+llama_build_and_test(test-perplexity-plumbing.cpp ARGS ${PROJECT_SOURCE_DIR})
+llama_build_and_test(test-cuda-fattn-route-policy.cpp ARGS ${PROJECT_SOURCE_DIR})
+llama_build_and_test(test-cuda-fattn-vec-policy.cpp ARGS ${PROJECT_SOURCE_DIR})
+llama_build_and_test(test-cuda-zero-dim-gemm.cpp ARGS ${PROJECT_SOURCE_DIR}/ggml/src/ggml-cuda/ggml-cuda.cu)
+llama_build_and_test(test-cpu-out-prod.cpp)
+llama_build_and_test(test-cpu-fattn-support.cpp)
+
+# The tests subdirectory is configured before tools/server, so server-context
+# is not a CMake target yet at this point.  Match test-chat above and gate on
+# the build option instead; the target is resolved when the full project is
+# generated.
+if (LLAMA_BUILD_SERVER)
+    llama_build_and_test(test-server-loop-guard.cpp)
+    target_include_directories(test-server-loop-guard PRIVATE ${PROJECT_SOURCE_DIR}/tools/server)
+    target_link_libraries(test-server-loop-guard PRIVATE server-context)
+
+    llama_build_and_test(test-server-prompt-checkpoint.cpp)
+    target_include_directories(test-server-prompt-checkpoint PRIVATE ${PROJECT_SOURCE_DIR}/tools/server ${PROJECT_SOURCE_DIR}/tools/mtmd)
+    target_link_libraries(test-server-prompt-checkpoint PRIVATE server-context)
+endif()
+# Upstream model-resolution coverage serves repositories through cpp-httplib.
+llama_build_and_test(test-model-resolution.cpp)
+# the test serves its repos from an httplib server, and the library links it privately
+target_link_libraries(test-model-resolution PRIVATE cpp-httplib)
+
+if (NOT LLAMA_SANITIZE_ADDRESS AND NOT GGML_SCHED_NO_REALLOC)
+  # TODO: repair known memory leaks
+  llama_build_and_test(test-opt.cpp)
+endif()
+llama_build_and_test(test-backend-ops.cpp)
+llama_build_and_test(test-kv-tail-copy-transaction.cpp)
+target_include_directories(test-kv-tail-copy-transaction PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+llama_build_and_test(test-model-load-cancel.cpp LABEL "model")
+llama_build_and_test(test-autorelease.cpp       LABEL "model")
+llama_build_and_test(test-backend-sampler.cpp   LABEL "model")
+
+# Test for state restore with fragmented KV cache
+# Requires a model, uses same args pattern as test-thread-safety
+llama_build_and_test(test-state-restore-fragmented.cpp LABEL "model" ARGS -m "${MODEL_DEST}")
+set_tests_properties(test-state-restore-fragmented PROPERTIES FIXTURES_REQUIRED test-download-model)
+
+# Test state save/load functionality
+llama_build_and_test(test-save-load-state.cpp LABEL "model" ARGS -m "${MODEL_DEST}")
+set_tests_properties(test-save-load-state PROPERTIES FIXTURES_REQUIRED test-download-model)
+
+# QuantFactory packages the Apache-2.0 SmolLM2 base model at a pinned revision.
+# Its 64-element attention heads are compatible with standard q4_0 KV tails.
+set(TAIL_MODEL_NAME "SmolLM2-135M.Q4_0.gguf")
+set(TAIL_MODEL_DEST "${CMAKE_BINARY_DIR}/kv-tail-fixtures/${TAIL_MODEL_NAME}")
+set(TAIL_MODEL_URL "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/cccdc4886cdd3ff1c4caedb20148dcbf6b547904/SmolLM2-135M.Q4_0.gguf?download=true")
+set(TAIL_MODEL_HASH "SHA256=6f96e054a48f8fcdb5814abc1203ca12c0f9cce2791ca9a5153caad8c3b5479b")
+add_test(NAME test-download-tail-model COMMAND ${CMAKE_COMMAND}
+    -DDEST=${TAIL_MODEL_DEST}
+    -DNAME=${TAIL_MODEL_NAME}
+    -DHASH=${TAIL_MODEL_HASH}
+    -DURL=${TAIL_MODEL_URL}
+    -P ${CMAKE_SOURCE_DIR}/cmake/download-models.cmake
+)
+set_tests_properties(test-download-tail-model PROPERTIES FIXTURES_SETUP test-download-tail-model)
+add_test(NAME test-save-load-state-tail COMMAND test-save-load-state
+    -m "${TAIL_MODEL_DEST}"
+    --kv-tail-tokens 128
+    --cache-type-k q4_0
+    --cache-type-v q4_0
+)
+set_tests_properties(test-save-load-state-tail PROPERTIES
+    LABELS "model"
+    FIXTURES_REQUIRED test-download-tail-model
+)
+if (APPLE)
+    llama_build(test-rset-release.cpp)
+endif()
+
+if (NOT GGML_BACKEND_DL)
+    # these tests use the backends directly and cannot be built with dynamic loading
+    llama_build_and_test(test-barrier.cpp)
+    llama_build_and_test(test-quantize-fns.cpp)
+    llama_build_and_test(test-quantize-perf.cpp)
+    llama_build_and_test(test-rope.cpp)
+    llama_build_and_test(test-col2im-1d.cpp)
+endif()
+
+# libmtmd
+set(LLAMA_TEST_NAME test-mtmd-c-api)
+llama_build_and_test(test-mtmd-c-api.c)
+target_link_libraries(${LLAMA_TEST_NAME} PRIVATE mtmd)
+unset(LLAMA_TEST_NAME)
+
+llama_build_and_test(test-mtmd-impl.cpp)
+target_link_libraries(test-mtmd-impl PRIVATE mtmd)
+
+# GGUF model data fetcher library for tests that need real model metadata
+# Only compile when cpp-httplib has SSL support (CPPHTTPLIB_OPENSSL_SUPPORT)
+if (TARGET cpp-httplib)
+    get_target_property(_cpp_httplib_defs cpp-httplib INTERFACE_COMPILE_DEFINITIONS)
+    if (_cpp_httplib_defs MATCHES "CPPHTTPLIB_OPENSSL_SUPPORT")
+        add_library(gguf-model-data STATIC gguf-model-data.cpp)
+        target_link_libraries(gguf-model-data PRIVATE llama-common cpp-httplib)
+        target_include_directories(gguf-model-data PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+        add_executable(test-gguf-model-data test-gguf-model-data.cpp)
+        target_link_libraries(test-gguf-model-data PRIVATE gguf-model-data llama-common)
+        llama_test(test-gguf-model-data LABEL "model")
+
+        # test-quant-type-selection requires gguf-model-data for remote model metadata
+        llama_build_and_test(test-quant-type-selection.cpp LABEL "model")
+        target_link_libraries(test-quant-type-selection PRIVATE gguf-model-data)
+        target_compile_definitions(test-quant-type-selection PRIVATE
+            SNAPSHOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/snapshots")
+    endif()
+endif()
+
+# dummy executable - not installed
+get_filename_component(TEST_TARGET test-c.c NAME_WE)
+add_executable(${TEST_TARGET} test-c.c)
+target_link_libraries(${TEST_TARGET} PRIVATE llama)
+
+if (NOT LLAMA_USE_SYSTEM_GGML)
+    # Needs non-public ggml-impl.h
+    llama_build_and_test(test-gguf.cpp)
+
+    # Needs non-public ggml{,-backend}-impl.h
+    llama_build_and_test(test-alloc.cpp)
+endif()
+
+llama_build(test-export-graph-ops.cpp)
+if (TARGET gguf-model-data)
+    target_link_libraries(test-export-graph-ops PRIVATE gguf-model-data)
+    target_compile_definitions(test-export-graph-ops PRIVATE LLAMA_HF_FETCH)
+endif()
+
+add_executable(test-ggml-op-coverage test-ggml-op-coverage.cpp)
+target_include_directories(test-ggml-op-coverage PRIVATE ${PROJECT_SOURCE_DIR}/ggml/include)
+target_link_libraries(test-ggml-op-coverage PRIVATE ggml)
+add_test(NAME test-ggml-op-coverage COMMAND $<TARGET_FILE:test-ggml-op-coverage>)
+set_property(TEST test-ggml-op-coverage PROPERTY LABELS main)
