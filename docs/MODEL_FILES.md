@@ -1,6 +1,15 @@
 # Model files
 
-Model weights are not distributed in this repository or binary release. Download the pinned public inputs and verify them before use.
+Model weights are not distributed in this repository or binary release. The recommended Balanced/MTP artifact is available as one preassembled GGUF from [Farggin/Lobo-Qwen3.8-27B-GSQ-RCO-IQ3_S-MTP-GGUF](https://huggingface.co/Farggin/Lobo-Qwen3.8-27B-GSQ-RCO-IQ3_S-MTP-GGUF).
+
+From either the source checkout or extracted Windows release:
+
+```powershell
+.\tools\download-balanced-model.ps1
+.\tools\verify-model.ps1 -Profile Balanced
+```
+
+The downloader is resumable, checks the literal byte count and SHA-256, and leaves an incomplete transfer as `.partial` for the next invocation.
 
 ## Maximum Context input
 
@@ -24,6 +33,7 @@ The underlying BF16 model is `Qwen/Qwen3.8-27B` at revision `1d4bf0f2ff6012fd820
 | Bytes | `11,975,960,640` |
 | Decimal GB / GiB | `11.975960640 GB` / `11.153482497 GiB` |
 | SHA-256 | `4eb8482539194ed9bc1555c88613f39f2e65db37b16d9ab173f908e78d454512` |
+| Preassembled download | <https://huggingface.co/Farggin/Lobo-Qwen3.8-27B-GSQ-RCO-IQ3_S-MTP-GGUF/blob/main/Qwen3.8-27B-GSQ-RCO-IQ3_S-MTP-Q4XS-Q3S.gguf> |
 | Base | the exact GSQ file above |
 | MTP donor | `unsloth/Qwen3.8-27B-GGUF`, revision `f975863083b62f54a5e6fac11671c750c2bbc59c` |
 | Donor filename | `Qwen3.8-27B-UD-IQ3_XXS.gguf` |
@@ -32,7 +42,7 @@ The underlying BF16 model is `Qwen/Qwen3.8-27B` at revision `1d4bf0f2ff6012fd820
 | Donor URL | <https://huggingface.co/unsloth/Qwen3.8-27B-GGUF/blob/f975863083b62f54a5e6fac11671c750c2bbc59c/Qwen3.8-27B-UD-IQ3_XXS.gguf> |
 | Donor repository license | Apache-2.0 |
 
-The deployment pack is a deterministic local assembly: all 851 base tensor payloads are byte-identical to GSQ; the 15 `blk.64.*` MTP tensor payloads are byte-identical to the pinned donor. The added MTP payload is 204,412,928 bytes. Large MTP weights are IQ4_XS/IQ3_S; small normalization tensors remain F32. Use `tools/assemble-mtp-pack.py` and require the exact output hash above.
+The deployment pack is a deterministic local assembly: all 851 base tensor payloads are byte-identical to GSQ; the 15 `blk.64.*` MTP tensor payloads are byte-identical to the pinned donor. The added MTP payload is 204,412,928 bytes. Large MTP weights are IQ4_XS/IQ3_S; small normalization tensors remain F32. The following source assembly is an optional reproducibility route; normal users should download the preassembled artifact above.
 
 ```powershell
 python .\tools\assemble-mtp-pack.py `

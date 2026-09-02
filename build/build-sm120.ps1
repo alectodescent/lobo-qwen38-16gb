@@ -80,6 +80,7 @@ foreach ($name in $closure) {
 Copy-Item -Path (Join-Path $repo 'launchers\*.ps1') -Destination (Join-Path $package 'launchers') -Force
 Copy-Item -LiteralPath (Join-Path $repo 'tools\verify-model.ps1') -Destination (Join-Path $package 'tools') -Force
 Copy-Item -LiteralPath (Join-Path $repo 'tools\verify-release.ps1') -Destination (Join-Path $package 'tools') -Force
+Copy-Item -LiteralPath (Join-Path $repo 'tools\download-balanced-model.ps1') -Destination (Join-Path $package 'tools') -Force
 Copy-Item -LiteralPath (Join-Path $repo 'tools\assemble-mtp-pack.py') -Destination (Join-Path $package 'tools') -Force
 Copy-Item -LiteralPath (Join-Path $repo 'tools\monitor-vram.ps1') -Destination (Join-Path $package 'tools') -Force
 Copy-Item -Path (Join-Path $repo 'benchmarks\*.py') -Destination (Join-Path $package 'benchmarks') -Force

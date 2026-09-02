@@ -20,7 +20,8 @@ $required = @(
     'docs\INSTALL_WINDOWS.md','docs\MODEL_FILES.md','docs\PROFILES.md',
     'launchers\run-balanced-230k.ps1','launchers\run-max-context-262k.ps1',
     'launchers\run-mtp-headless-262k.ps1',
-    'tools\verify-model.ps1','tools\assemble-mtp-pack.py','tools\monitor-vram.ps1',
+    'tools\verify-model.ps1','tools\download-balanced-model.ps1',
+    'tools\assemble-mtp-pack.py','tools\monitor-vram.ps1',
     'benchmarks\run-depth-curve.py','benchmarks\run-long-binding.py',
     'benchmarks\run-rollover.py','benchmarks\run-save-reload.py',
     'benchmarks\run-firewall.py','benchmarks\spatial-firewall-v1.json'

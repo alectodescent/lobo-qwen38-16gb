@@ -37,12 +37,15 @@ cd lobo-qwen38-16gb
 .\build\build-sm120.ps1
 ```
 
-Obtain and verify the model files described in [Model files](docs/MODEL_FILES.md). Put them in `models\`.
+Download the single preassembled Balanced/MTP model and verify it:
 
 ```powershell
-.\tools\verify-model.ps1
+.\tools\download-balanced-model.ps1
+.\tools\verify-model.ps1 -Profile Balanced
 .\launchers\run-balanced-230k.ps1
 ```
+
+The model is hosted at [Farggin/Lobo-Qwen3.8-27B-GSQ-RCO-IQ3_S-MTP-GGUF](https://huggingface.co/Farggin/Lobo-Qwen3.8-27B-GSQ-RCO-IQ3_S-MTP-GGUF). The deterministic two-source assembly remains documented as a reproducibility fallback.
 
 The server listens on `http://127.0.0.1:18080`. For the target-only native-context profile:
 

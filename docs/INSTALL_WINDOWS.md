@@ -31,10 +31,10 @@ The build script locates Visual Studio with `vswhere`, configures the source in 
 
 ## Prebuilt ZIP
 
-Download `lobo-sm120-win64-v0.1.0.zip` from this repository's GitHub Release, then extract it to a new directory. The archive is self-contained apart from the documented Microsoft and NVIDIA runtimes and the separately obtained model files.
+Download `lobo-sm120-win64-v0.1.1.zip` from this repository's latest GitHub Release, then extract it to a new directory. The archive is self-contained apart from the documented Microsoft and NVIDIA runtimes and the separately obtained model file.
 
 ```powershell
-Expand-Archive .\lobo-sm120-win64-v0.1.0.zip -DestinationPath .\lobo
+Expand-Archive .\lobo-sm120-win64-v0.1.1.zip -DestinationPath .\lobo
 Set-Location .\lobo
 .\runtime\llama-server.exe --version
 ```
@@ -43,11 +43,14 @@ Put the verified model files in that extracted directory's `models\` folder. Its
 
 ## Models
 
-Follow [MODEL_FILES.md](MODEL_FILES.md), place files in `models\`, then run:
+Download and verify the single Balanced/MTP model:
 
 ```powershell
-.\tools\verify-model.ps1
+.\tools\download-balanced-model.ps1
+.\tools\verify-model.ps1 -Profile Balanced
 ```
+
+The two-source assembler remains available in [MODEL_FILES.md](MODEL_FILES.md) for reproducibility.
 
 Verification is intentionally strict. A same-named file with a different hash is not the frozen appliance.
 

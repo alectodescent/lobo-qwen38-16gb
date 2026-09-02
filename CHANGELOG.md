@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 — 2026-09-03
+
+- Added a public single-file Hugging Face distribution of the frozen Lobo MTP deployment pack.
+- Added a resumable, hash-verifying Balanced model downloader to source and binary packages.
+- Kept the deterministic two-source assembly as the reproducibility fallback.
+
 ## 0.1.0 — 2026-09-02
 
 - First sanitized public release with fresh Git history.
